@@ -240,6 +240,20 @@ thread_exit (void)
   process_exit ();
 #endif
 
+struct list_elem *e;
+  struct list *files = &thread_current()->files;
+  while(!list_empty (files))
+  {
+    e = list_pop_front (files);
+    struct thread_file *f = list_entry (e, struct thread_file, file_elem);
+    acquire_lock_f ();
+    file_close (f->file);
+    release_lock_f ();
+    list_remove (e);
+    // freedom
+    free (f);
+  }
+
   intr_disable ();
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
@@ -381,9 +395,6 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
-#ifdef USERPROG
-  t->pagedir = NULL; 
-#endif
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
