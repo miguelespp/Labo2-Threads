@@ -9,7 +9,7 @@
 
 #define max_syscall 21
 
-static struct lock lock_f;
+
 static void syscall_handler(struct intr_frame *);
 
 static void (*syscalls[max_syscall])(struct intr_frame *);
@@ -92,20 +92,7 @@ find_file_id(int file_id)
   return false;
 }
 
-void init_lock_f()
-{
-  lock_init(&lock_f); 
-}
 
-void acquire_lock_f()
-{
-  lock_acquire(&lock_f);
-}
-
-void release_lock_f()
-{
-  lock_release(&lock_f);
-}
 
 static int
 get_user(const uint8_t *uaddr)

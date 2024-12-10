@@ -14,6 +14,7 @@
 #ifdef USERPROG
 #include "userprog/process.h"
 #include "userprog/syscall.h"
+#include "filesys/file.h"
 #endif
 
 /* Random value for struct thread's `magic' member.
@@ -37,6 +38,8 @@ static struct thread *initial_thread;
 
 /* Lock used by allocate_tid(). */
 static struct lock tid_lock;
+
+static struct lock lock_f;
 
 /* Stack frame for kernel_thread(). */
 struct kernel_thread_frame 
@@ -471,3 +474,21 @@ allocate_tid (void)
 }
 
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+void init_lock_f()
+{
+  lock_init(&lock_f); 
+}
+
+static struct lock lock_f;
+void 
+acquire_lock_f ()
+{
+  lock_acquire(&lock_f);
+}
+
+void 
+release_lock_f ()
+{
+  lock_release(&lock_f);
+}

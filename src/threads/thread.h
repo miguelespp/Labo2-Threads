@@ -111,6 +111,10 @@ struct thread
     struct list_elem file_elem;
   };
 
+   void init_lock_f();
+   void acquire_lock_f();
+   void release_lock_f();
+
 #define THREAD_FILE_LIST_INIT(t) list_init(&(t)->files)
 
 /* If false (default), use round-robin scheduler.
