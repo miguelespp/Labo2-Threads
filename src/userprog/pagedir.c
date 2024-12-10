@@ -95,27 +95,24 @@ lookup_page (uint32_t *pd, const void *vaddr, bool create)
    otherwise it is read-only.
    Returns true if successful, false if memory allocation
    failed. */
-bool
-pagedir_set_page (uint32_t *pd, void *upage, void *kpage, bool writable)
-{
+bool pagedir_set_page(uint32_t *pd, void *upage, void *kpage, bool writable) {
   uint32_t *pte;
 
-  ASSERT (pg_ofs (upage) == 0);
-  ASSERT (pg_ofs (kpage) == 0);
-  ASSERT (is_user_vaddr (upage));
-  ASSERT (vtop (kpage) >> PTSHIFT < init_ram_pages);
-  ASSERT (pd != init_page_dir);
+  ASSERT(pg_ofs(upage) == 0);
+  ASSERT(pg_ofs(kpage) == 0);
+  ASSERT(is_user_vaddr(upage));
+  ASSERT(vtop(kpage) >> PTSHIFT < init_ram_pages);
+  ASSERT(pd != init_page_dir); 
 
-  pte = lookup_page (pd, upage, true);
+  pte = lookup_page(pd, upage, true);
 
-  if (pte != NULL) 
-    {
-      ASSERT ((*pte & PTE_P) == 0);
-      *pte = pte_create_user (kpage, writable);
-      return true;
-    }
-  else
+  if (pte != NULL) {
+    ASSERT((*pte & PTE_P) == 0); 
+    *pte = pte_create_user(kpage, writable);
+    return true;
+  } else {
     return false;
+  }
 }
 
 /* Looks up the physical address that corresponds to user virtual
@@ -140,21 +137,21 @@ pagedir_get_page (uint32_t *pd, const void *uaddr)
    directory PD.  Later accesses to the page will fault.  Other
    bits in the page table entry are preserved.
    UPAGE need not be mapped. */
-void
-pagedir_clear_page (uint32_t *pd, void *upage) 
-{
+   
+void pagedir_clear_page(uint32_t *pd, void *upage) {
   uint32_t *pte;
 
-  ASSERT (pg_ofs (upage) == 0);
-  ASSERT (is_user_vaddr (upage));
+  ASSERT(pg_ofs(upage) == 0);
+  ASSERT(is_user_vaddr(upage));
 
-  pte = lookup_page (pd, upage, false);
-  if (pte != NULL && (*pte & PTE_P) != 0)
-    {
-      *pte &= ~PTE_P;
-      invalidate_pagedir (pd);
-    }
+  // Aquí, 'pd' es el directorio de páginas del hilo, no el global 'init_page_dir'
+  pte = lookup_page(pd, upage, false);
+  if (pte != NULL && (*pte & PTE_P) != 0) {
+    *pte &= ~PTE_P;
+    invalidate_pagedir(pd); // Invalidar la tabla de páginas si es necesario
+  }
 }
+
 
 /* Returns true if the PTE for virtual page VPAGE in PD is dirty,
    that is, if the page has been modified since the PTE was
