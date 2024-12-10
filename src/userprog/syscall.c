@@ -19,9 +19,7 @@ static void (*syscalls[max_syscall])(struct intr_frame *);
 void sys_write(struct intr_frame *f);
 
 // funtions declarations
-void init_lock_f();
-void acquire_lock_f();
-void release_lock_f();
+
 void *check_ptr2(const void *vaddr);
 struct thread_file *find_file_id(int file_id);
 
@@ -48,7 +46,7 @@ syscall_handler(struct intr_frame *f UNUSED)
 void sys_write(struct intr_frame *f)
 {
   uint32_t *user_ptr = f->esp;
-  check_ptr2(user_ptr + 7); // for tests maybe?
+  check_ptr2(user_ptr + 7); // 
   check_ptr2(*(user_ptr + 6));
   *user_ptr++;
   int fd = *user_ptr;
