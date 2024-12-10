@@ -286,6 +286,20 @@ thread_exit (void)
   process_exit ();
 #endif
 
+struct list_elem *e;
+  struct list *files = &thread_current()->files;
+  while(!list_empty (files))
+  {
+    e = list_pop_front (files);
+    struct thread_file *f = list_entry (e, struct thread_file, file_elem);
+    acquire_lock_f ();
+    file_close (f->file);
+    release_lock_f ();
+    list_remove (e);
+    // freedom
+    free (f);
+  }
+
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
@@ -463,6 +477,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  THREAD_FILE_LIST_INIT(t);
+  t->max_file_fd = 2;
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);

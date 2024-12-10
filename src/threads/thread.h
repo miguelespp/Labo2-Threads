@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "filesys/file.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -92,6 +93,8 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+    struct list files;                  /* List of opened files*/
+    int max_file_fd;                    /*store max fd */
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -101,6 +104,15 @@ struct thread
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
+
+  struct thread_file
+  {
+    int fd;  // a file descriptor
+    struct file* file;
+    struct list_elem file_elem;
+  };
+
+#define THREAD_FILE_LIST_INIT(t) list_init(&(t)->files)
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
