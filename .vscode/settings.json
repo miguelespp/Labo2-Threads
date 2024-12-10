@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "flags.h": "c",
+        "process.h": "c",
+        "syscall.h": "c",
+        "vaddr.h": "c",
+        "intr-stubs.h": "c",
+        "inode.h": "c",
+        "palloc.h": "c",
+        "synch.h": "c",
+        "thread.h": "c"
+    }
+}
